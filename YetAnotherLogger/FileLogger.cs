@@ -15,9 +15,9 @@ namespace YAL
         /// </summary>
         /// <param name="type">The type of the error to log</param>
         /// <param name="text">The error message to log.</param>
-        public override void Log(LoggType type, string text)
+        public override void Log(LoggType type, string text, Exception InnerException = null)
         {
-            LoggInfo loggInfo = new LoggInfo(text, type);
+            LoggInfo loggInfo = new LoggInfo(text, type, InnerException);
             Log(loggInfo);
         }
 
