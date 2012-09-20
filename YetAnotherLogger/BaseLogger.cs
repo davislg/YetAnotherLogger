@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace YAL
 {
@@ -11,7 +12,7 @@ namespace YAL
         /// <summary>
         /// The File name to log in.
         /// </summary>
-        public static string FileName;
+        private static string fileName;
         /// <summary>
         /// The directory to save the log file in, excluding <see cref="AppName"/>.
         /// </summary>
@@ -43,6 +44,18 @@ namespace YAL
             }
         }
 
+        public static string FileName
+        {
+            get
+            {
+                return fileName;
+            }
+            set
+            {
+                fileName = value.Replace('/', '-').Replace(':', '-');
+            }
+        }
+
         /// <summary>
         /// Creates a new <see cref="BaseLogger"/>
         /// </summary>
@@ -65,6 +78,14 @@ namespace YAL
             return _default;
 
             throw new ArgumentException("The logger " + loggerName + " was not found.");
+        }
+
+        protected void CreateDirIfNotExist()
+        {
+            string path = Path.Combine(BaseDirectory, AppName);
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
         }
 
         /// <summary>
