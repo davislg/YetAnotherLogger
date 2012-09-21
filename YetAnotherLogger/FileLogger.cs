@@ -8,9 +8,37 @@ using System.Text.RegularExpressions;
 
 namespace YAL
 {
-    public class FileLogger : BaseLogger
+    public class FileLogger : Logger
     {
         internal FileLogger() { }
+
+        /// <summary>
+        /// The <see cref="Logger"/>.
+        /// NOTE: It will create a new <see cref="FileLogger"/>
+        /// if no logger has been created previously or current logger
+        /// isn't a <see cref="FileLogger"/>.
+        /// </summary>
+        public new static Logger Default
+        {
+            get
+            {
+                if (_default == null || !(_default is FileLogger))
+                    _default = new FileLogger();
+                return _default;
+            }
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="FileLogger"/>
+        /// </summary>
+        /// <returns>The created <see cref="FileLogger"/></returns>
+        public static Logger Create()
+        {
+            if (!(_default is FileLogger))
+                return Create("FileLogger");
+            else
+                return Default;
+        }
 
         /// <summary>
         /// Logs a new line of text to a text file
@@ -42,7 +70,7 @@ namespace YAL
                 loggBuilder.AppendFormat(" - EXCEPTION: {0} - STACKTRACE: {1}", loggInfo.InnerException.Message, loggInfo.InnerException.StackTrace);
             }
 
-            string filePath = Path.GetFullPath(Path.Combine(BaseDirectory, AppName, FileName));
+            string filePath = Path.Combine(BaseDirectory, AppName, FileName);
             CreateDirIfNotExist();
             AddToObservable(loggInfo);
             using (StreamWriter log_writer = new StreamWriter(filePath, true, Encoding.UTF8))

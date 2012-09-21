@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace YAL
 {
-    public abstract class BaseLogger
+    public abstract class Logger
     {
         /// <summary>
         /// The name of the Application Folder to be used.
@@ -18,30 +18,27 @@ namespace YAL
         /// The directory to save the log file in, excluding <see cref="AppName"/>.
         /// </summary>
         public static string BaseDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        protected static BaseLogger _default;
+        protected static Logger _default;
         private static ObservableCollection<LoggInfo> loggInfos;
 
         /// <summary>
         /// Creates a new <see cref="FileLogger"/>
         /// </summary>
         /// <returns>The created <see cref="FileLogger"/></returns>
-        public static BaseLogger Create()
+        public static Logger Create()
         {
             return Create("FileLogger");
         }
 
         /// <summary>
-        /// The <see cref="BaseLogger"/>.
-        /// NOTE: It will create a new <see cref="FileLogger"/>
-        /// if no logger has been created previously.
+        /// The <see cref="Logger"/>.
+        /// NOTE: TO use this a Logger must be created with
+        /// the <see cref="Create()"/> method in <see cref="FileLogger"/> or <see cref="XmlLogger"/>.
         /// </summary>
-        public static BaseLogger Default
+        public static Logger Default
         {
             get
             {
-                if (_default == null)
-                    return Create();
-
                 return _default;
             }
         }
@@ -69,15 +66,15 @@ namespace YAL
         }
 
         /// <summary>
-        /// Creates a new <see cref="BaseLogger"/>
+        /// Creates a new <see cref="Logger"/>
         /// </summary>
         /// <param name="loggerName">
         /// The name of the logger to create.
-        /// Valid values:
+        /// Valid known values:
         /// FileLogger and XmlLogger
         /// </param>
-        /// <returns>The new <see cref="BaseLogger"/></returns>
-        public static BaseLogger Create(string loggerName)
+        /// <returns>The new <see cref="Logger"/></returns>
+        public static Logger Create(string loggerName)
         {
             if (string.Compare(loggerName, "FileLogger", StringComparison.OrdinalIgnoreCase) == 0)
             {
@@ -92,12 +89,17 @@ namespace YAL
             throw new ArgumentException("The logger " + loggerName + " was not found.");
         }
 
-        protected void CreateDirIfNotExist()
+        protected bool CreateDirIfNotExist()
         {
             string path = Path.Combine(BaseDirectory, AppName);
 
             if (!Directory.Exists(path))
+            {
                 Directory.CreateDirectory(path);
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>

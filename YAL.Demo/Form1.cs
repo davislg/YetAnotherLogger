@@ -11,19 +11,20 @@ namespace YAL.Demo
 {
     public partial class Form1 : Form
     {
+        string fileName;
         public Form1()
         {
             InitializeComponent();
             this.comboBox1.SelectedIndex = 0;
             this.comboBox2.SelectedIndex = 0;
-            YAL.BaseLogger.AppName = "YAL Demo Log";
+            YAL.Logger.AppName = "YAL Demo Log";
             YAL.FileLogger.BaseDirectory = string.Empty;
-            string filename = DateTime.Now + ".log";
-            YAL.BaseLogger.FileName = filename;
+            fileName = DateTime.Now.ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            YAL.Logger.FileName = fileName + ".log";
             YAL.FileLogger.Create();
             Log();
         }
@@ -48,14 +49,21 @@ namespace YAL.Demo
 
             if (Enum.TryParse<LoggType>(this.comboBox1.Text, out loggType))
             {
-                YAL.FileLogger.Default.Log(loggType, this.textBox1.Text, exception);
+                YAL.Logger.Default.Log(loggType, this.textBox1.Text, exception);
             }
             else
             {
-                YAL.FileLogger.Default.Log(LoggType.General, this.textBox1.Text, exception);
+                YAL.Logger.Default.Log(LoggType.General, this.textBox1.Text, exception);
             }
 
             MessageBox.Show("Error logged");
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            YAL.Logger.FileName = fileName + ".xml";
+            YAL.XmlLogger.Create();
+            Log();
         }
     }
 }
