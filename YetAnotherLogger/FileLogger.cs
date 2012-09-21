@@ -55,7 +55,7 @@ namespace YAL
         {
             ObservableCollection<LoggInfo> loggInfos = new ObservableCollection<LoggInfo>();
 
-            Regex loggRegex = new Regex(@"^([0-9 \.\-\:]+); - DEF: (Error|Info|General|Warning);(?: - TEXT: (.+);)?(?: - EXTYPE: (.+); - EXCEPTION: ([A-Z ]+) - STACKTRACE: (.+))?$", RegexOptions.IgnoreCase);
+            Regex loggRegex = new Regex(@"^([0-9 \.\-\:]+); - DEF: (Error|Info|General|Warning);(?: - TEXT: (.+);)?(?: - EXTYPE: (.+); - EXCEPTION: (.+) - STACKTRACE: (.*))?$", RegexOptions.IgnoreCase);
 
             foreach (string filePath in Directory.EnumerateFiles(Path.Combine(BaseDirectory, AppName)))
             {
