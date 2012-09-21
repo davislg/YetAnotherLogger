@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections.ObjectModel;
 
 namespace YAL
 {
@@ -18,6 +19,7 @@ namespace YAL
         /// </summary>
         public static string BaseDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         protected static BaseLogger _default;
+        private static ObservableCollection<LoggInfo> loggInfos;
 
         /// <summary>
         /// Creates a new <see cref="FileLogger"/>
@@ -53,6 +55,16 @@ namespace YAL
             set
             {
                 fileName = value.Replace('/', '-').Replace(':', '-');
+            }
+        }
+
+        public static ObservableCollection<LoggInfo> LoggInfos
+        {
+            get
+            {
+                if (loggInfos == null)
+                    loggInfos = Default.GetLogg();
+                return loggInfos;
             }
         }
 
@@ -93,12 +105,20 @@ namespace YAL
         /// </summary>
         /// <param name="type">The type of the error to log</param>
         /// <param name="text">The error message to log.</param>
-        public abstract void Log(LoggType type, string text);
+        /// <param name="innerException">The InnerException of this error</param>
+        public abstract void Log(LoggType type, string text, Exception innerException = null);
 
         /// <summary>
         /// Logs an error
         /// </summary>
         /// <param name="loggInfo">The <see cref="LoggInfo"/> to log from.</param>
         public abstract void Log(LoggInfo loggInfo);
+
+        protected abstract ObservableCollection<LoggInfo> GetLogg();
+
+        protected static void AddToObservable(LoggInfo loggInfo)
+        {
+            LoggInfos.Add(loggInfo);
+        }
     }
 }

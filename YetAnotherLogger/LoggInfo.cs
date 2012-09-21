@@ -49,7 +49,13 @@ namespace YAL
         public LoggInfo(string Text, LoggType Type, Exception Exception)
             : this(Text, Type)
         {
-            this.Exception = Exception;
+            if (Exception != null)
+            {
+                this.InnerException = new InnerException();
+                InnerException.ExceptionType = Exception.GetType();
+                InnerException.Message = Exception.Message;
+                InnerException.StackTrace = Exception.StackTrace;
+            }
         }
 
         /// <summary>
@@ -61,7 +67,13 @@ namespace YAL
         public LoggInfo(Exception Exception)
             : this()
         {
-            this.Exception = Exception;
+            if (Exception != null)
+            {
+                this.InnerException = new InnerException();
+                InnerException.ExceptionType = Exception.GetType();
+                InnerException.Message = Exception.Message;
+                InnerException.StackTrace = Exception.StackTrace;
+            }
         }
 
         /// <summary>
@@ -75,6 +87,17 @@ namespace YAL
         {
             this.Type = Type;
         }
+
+        public LoggInfo(DateTime date, string text, LoggType Type, Type InnerType, string InnerMessage, string InnerStack)
+            : this(text, Type)
+        {
+            this.Date = date;
+            this.InnerException = new InnerException();
+            this.InnerException.ExceptionType = InnerType;
+            this.InnerException.Message = InnerMessage;
+            this.InnerException.StackTrace = InnerStack;
+        }
+
         /// <summary>
         /// The error message to log.
         /// </summary>
@@ -91,9 +114,32 @@ namespace YAL
         public DateTime Date { get; set; }
 
         /// <summary>
-        /// The exception, or inner exception to catch.
+        /// The Inner exception to log.
         /// </summary>
-        public Exception Exception { get; set; }
+        public InnerException InnerException { get; set; }
+    }
+
+    /// <summary>
+    /// The inner exception to log.
+    /// </summary>
+    public sealed class InnerException
+    {
+        internal InnerException() { }
+
+        /// <summary>
+        /// The type of the exception.
+        /// </summary>
+        public Type ExceptionType { get; set; }
+
+        /// <summary>
+        /// The Message of the Inner Exception
+        /// </summary>
+        public string Message { get; set; }
+
+        /// <summary>
+        /// The StackTrace of the Inner Exception
+        /// </summary>
+        public string StackTrace { get; set; }
     }
 
     /// <summary>
