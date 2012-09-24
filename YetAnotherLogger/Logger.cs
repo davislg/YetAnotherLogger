@@ -39,6 +39,9 @@ namespace YAL
         {
             get
             {
+                if (_default == null)
+                    Create();
+
                 return _default;
             }
         }
