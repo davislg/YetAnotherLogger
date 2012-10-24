@@ -16,6 +16,7 @@ namespace YAL
         private static string fileName;
         /// <summary>
         /// The directory to save the log file in, excluding <see cref="AppName"/>.
+        /// Default value is <c>%localappdata%</c>
         /// </summary>
         public static string BaseDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         protected static Logger _default;

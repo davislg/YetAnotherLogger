@@ -7,6 +7,8 @@ namespace YAL
 {
     public class XmlLogger : Logger
     {
+        public static bool Indent = true;
+
         internal XmlLogger() { }
 
         /// <summary>
@@ -55,17 +57,15 @@ namespace YAL
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.ConformanceLevel = ConformanceLevel.Auto;
             settings.Encoding = Encoding.UTF8;
-            settings.Indent = false;
-            settings.OmitXmlDeclaration = true;
+            settings.Indent = Indent;
             string filePath = Path.Combine(BaseDirectory, AppName, FileName);
             bool exists = File.Exists(filePath);
             AddToObservable(loggInfo);
             XmlDocument document = new XmlDocument();
-            XmlNode rootNode;
+            XmlNode rootNode = document.CreateElement("logs");
             if (exists)
             {
                 document.Load(filePath);
-                rootNode = document.ChildNodes[0];
             }
             else
             {
@@ -86,6 +86,12 @@ namespace YAL
                 XmlNode textNode = document.CreateElement("text");
                 textNode.InnerText = loggInfo.Text;
                 logNode.AppendChild(textNode);
+            }
+            if (!String.IsNullOrWhiteSpace(loggInfo.StackTrace))
+            {
+                XmlNode stackNode = document.CreateElement("stackTrace");
+                stackNode.InnerText = loggInfo.StackTrace;
+                logNode.AppendChild(stackNode);
             }
             if (loggInfo.InnerException != null)
             {
@@ -108,10 +114,12 @@ namespace YAL
                     innerStac.InnerText = loggInfo.InnerException.StackTrace;
                     innerNode.AppendChild(innerStac);
                 }
+
                 logNode.AppendChild(innerNode);
             }
 
-            rootNode.AppendChild(logNode);
+
+            document.DocumentElement.AppendChild(logNode);
 
             using (XmlWriter writer = XmlWriter.Create(filePath, settings))
             {
@@ -145,9 +153,13 @@ namespace YAL
                             if (logNode["text"] != null)
                                 loggInfo.Text = logNode["text"].InnerText;
 
+                            if (logNode["stackTrace"] != null)
+                                loggInfo.StackTrace = logNode["stackTrace"].InnerText;
+
                             if (logNode["innerexception"] != null)
                             {
                                 XmlNode innerNode = logNode["innerexception"];
+                                loggInfo.InnerException = new InnerException();
                                 if (innerNode.Attributes["extype"] != null)
                                     loggInfo.InnerException.ExceptionType = Type.GetType(innerNode.Attributes["extype"].InnerText);
                                 if (innerNode["innermessage"] != null)

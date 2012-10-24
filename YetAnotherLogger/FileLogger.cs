@@ -30,7 +30,7 @@ namespace YAL
         /// Creates a new <see cref="FileLogger"/>
         /// </summary>
         /// <returns>The created <see cref="FileLogger"/></returns>
-        public static Logger Create()
+        public new static Logger Create()
         {
             if (!(_default is FileLogger))
                 return Create("FileLogger");
@@ -62,6 +62,12 @@ namespace YAL
             {
                 loggBuilder.AppendFormat(" - TEXT: {0};", loggInfo.Text);
             }
+
+            if (!String.IsNullOrWhiteSpace(loggInfo.StackTrace))
+            {
+                loggBuilder.AppendFormat(" - STACK: {0};", loggInfo.StackTrace);
+            }
+
             if (loggInfo.InnerException != null)
             {
                 loggBuilder.AppendFormat(" - EXTYPE: {0};", loggInfo.InnerException.ExceptionType);
@@ -81,7 +87,7 @@ namespace YAL
         {
             ObservableCollection<LoggInfo> loggInfos = new ObservableCollection<LoggInfo>();
 
-            Regex loggRegex = new Regex(@"^([0-9 \.\-\:]+); - DEF: (Error|Info|General|Warning);(?: - TEXT: (.+);)?(?: - EXTYPE: (.+); - EXCEPTION: (.+) - STACKTRACE: (.*))?$", RegexOptions.IgnoreCase);
+            Regex loggRegex = new Regex(@"^([0-9 \.\-\:]+); - DEF: (Error|Info|General|Warning);(?: - TEXT: (.+);)?(:? STACK: (.+);)?(?: - EXTYPE: (.+); - EXCEPTION: (.+) - STACKTRACE: (.*))?$", RegexOptions.IgnoreCase);
 
             foreach (string filePath in Directory.EnumerateFiles(Path.Combine(BaseDirectory, AppName)))
             {

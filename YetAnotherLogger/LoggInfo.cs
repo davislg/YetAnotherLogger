@@ -45,16 +45,16 @@ namespace YAL
         /// </summary>
         /// <param name="Text">The error message</param>
         /// <param name="Type">The <see cref="LoggType"/> of this error</param>
-        /// <param name="Exception">The InnerException of this Error</param>
-        public LoggInfo(string Text, LoggType Type, Exception Exception)
+        /// <param name="InnerException">The InnerException of this Error</param>
+        public LoggInfo(string Text, LoggType Type, Exception InnerException)
             : this(Text, Type)
         {
-            if (Exception != null)
+            if (InnerException != null)
             {
                 this.InnerException = new InnerException();
-                InnerException.ExceptionType = Exception.GetType();
-                InnerException.Message = Exception.Message;
-                InnerException.StackTrace = Exception.StackTrace;
+                this.InnerException.ExceptionType = InnerException.GetType();
+                this.InnerException.Message = InnerException.Message;
+                this.InnerException.StackTrace = InnerException.StackTrace;
             }
         }
 
@@ -69,10 +69,21 @@ namespace YAL
         {
             if (Exception != null)
             {
-                this.InnerException = new InnerException();
-                InnerException.ExceptionType = Exception.GetType();
-                InnerException.Message = Exception.Message;
-                InnerException.StackTrace = Exception.StackTrace;
+                //this.InnerException = new InnerException();
+                //InnerException.ExceptionType = Exception.GetType();
+                //InnerException.Message = Exception.Message;
+                //InnerException.StackTrace = Exception.StackTrace;
+
+                this.StackTrace = Exception.StackTrace;
+                this.Text = Exception.Message;
+
+                if (Exception.InnerException != null)
+                {
+                    this.InnerException = new InnerException();
+                    InnerException.ExceptionType = Exception.InnerException.GetType();
+                    InnerException.Message = Exception.InnerException.Message;
+                    InnerException.StackTrace = Exception.InnerException.StackTrace;
+                }
             }
         }
 
@@ -102,6 +113,11 @@ namespace YAL
         /// The error message to log.
         /// </summary>
         public string Text { get; set; }
+
+        /// <summary>
+        /// The StackTrace to log.
+        /// </summary>
+        public string StackTrace { get; set; }
 
         /// <summary>
         /// The type of the error message

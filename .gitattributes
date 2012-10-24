@@ -5,3 +5,6 @@
 *.cs     diff=csharp
 *.sln    merge=union
 *.csproj merge=union
+
+# Binary
+*.pfx
