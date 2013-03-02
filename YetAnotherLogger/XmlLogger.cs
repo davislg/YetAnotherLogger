@@ -62,14 +62,13 @@ namespace YAL
             bool exists = File.Exists(filePath);
             AddToObservable(loggInfo);
             XmlDocument document = new XmlDocument();
-            XmlNode rootNode = document.CreateElement("logs");
             if (exists)
             {
                 document.Load(filePath);
             }
             else
             {
-                rootNode = document.CreateElement("logs");
+                XmlNode rootNode = document.CreateElement("logs");
                 document.AppendChild(rootNode);
             }
 
